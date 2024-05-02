@@ -3,7 +3,22 @@ import math
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from PIL import Image, ImageDraw, ImageFont
 
+
+
+def cv2ImgAddText(img, text, lefttop: tuple[int, int], textColor:tuple[int, int, int] = (0, 255, 0), textSize=20):
+    if (isinstance(img, np.ndarray)):  # 判断是否OpenCV图片类型
+        img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    # 创建一个可以在给定图像上绘图的对象
+    draw = ImageDraw.Draw(img)
+    # 字体的格式
+    fontStyle = ImageFont.truetype(
+        "simsun.ttc", textSize, encoding="utf-8")
+    # 绘制文本
+    draw.text(lefttop, text, tuple(reversed(textColor)), font=fontStyle)
+    # 转换回OpenCV格式
+    return cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
 
 
 if __name__ == '__main__':
@@ -20,8 +35,12 @@ if __name__ == '__main__':
     cv2.line(img, (centerpointX + 100,centerpointY + 100), (centerpointX + 100,centerpointY - 100), (0,0,255), 2)
 
     # 绘制圆形  当thickness为-1时填充内部颜色
-    cv2.circle(img, (centerpointX, centerpointY), 30, (0,0,255), 3)
+    cv2.circle(img, (centerpointX, centerpointY), 30, (0,0,255), 2)
 
+# 绘制矩形
+    cv2.rectangle(img, (24, 24), (centerpointX, centerpointY), (0,0,255), 2)
+# 绘制文字
+    img = cv2ImgAddText(img, "测试测试测试", (100, 100),  (0,0,255), 24 )
     cv2.imshow("图像窗口", img)
     cv2.waitKey(0)
 
